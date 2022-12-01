@@ -18,3 +18,20 @@ def get_csrf(request: HttpRequest) -> JsonResponse:
     })
 
     return response
+
+count = 1
+
+def get_count(request: HttpRequest) -> JsonResponse:
+    """
+    Function to retrieve current count
+
+    Parameters:
+        request (HttpRequest): get request to retrieve count
+
+    Returns:
+        response (JsonResponse): response with count
+    """
+    return JsonResponse({
+        'count': count
+    })
+

@@ -1,23 +1,42 @@
-import logo from './logo.svg';
 import './App.css';
+import React from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [count, setCount] = useState(undefined)
+
+  async function get_count() {
+    try {
+      const result = await axios.get("http://localhost:8000/count/");
+      return result.data.count;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function post_count() {
+    
+  }
+
+  useEffect(() => {
+    get_count().then(result => {
+      if (result) {
+        setCount(result);
+        setIsLoading(false);
+      }
+    })
+  })
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Welcome to the web clicker!</h1>
+      {isLoading && <CircularProgress />}
+      <p>{count}</p>
     </div>
   );
 }
