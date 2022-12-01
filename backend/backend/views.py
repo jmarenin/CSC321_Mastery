@@ -1,6 +1,8 @@
 from django.http import *
 from django.middleware.csrf import get_token
 from django.views.decorators.http import *
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 @require_GET
 def get_csrf(request: HttpRequest) -> JsonResponse:
@@ -21,7 +23,9 @@ def get_csrf(request: HttpRequest) -> JsonResponse:
 
 count = 1
 
-def get_count(request: HttpRequest) -> JsonResponse:
+# @csrf_exempt
+@require_http_methods(['GET', 'PATCH'])
+def count_request(request: HttpRequest) -> JsonResponse:
     """
     Function to retrieve current count
 
@@ -31,6 +35,13 @@ def get_count(request: HttpRequest) -> JsonResponse:
     Returns:
         response (JsonResponse): response with count
     """
+    global count
+
+    print(json.dumps(dict(request.headers), indent=2))
+
+    if request.method == 'PATCH':
+        count += 1
+    
     return JsonResponse({
         'count': count
     })

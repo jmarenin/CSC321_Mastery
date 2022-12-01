@@ -69,7 +69,15 @@ TEMPLATES = [
     },
 ]
 
+from corsheaders.defaults import default_headers
+
 CORS_ORIGIN_ALLOW_ALL = True
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_NAME = "csrftoken"
+CSRF_COOKIE_HTTPONLY = False
+CORS_EXPOSE_HEADERS = ["Content-Type", "HTTP_X_CSRFTOKEN"]
+CORS_ALLOW_CREDENTIALS = True
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 

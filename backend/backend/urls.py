@@ -21,5 +21,5 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('csrf/', views.get_csrf),
-    path('count/', views.get_count)
+    path('count/', views.count_request)
 ]
