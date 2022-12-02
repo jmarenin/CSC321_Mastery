@@ -10,7 +10,10 @@ import {
   Grid,
   Paper,
   IconButton,
-  Button
+  Button,
+  Modal,
+  Box,
+  ButtonGroup
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
@@ -28,14 +31,27 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
+
 
 function App() {
-  const [tokenIsLoading, setTokenIsLoading] = useState(false);
   const [countIsLoading, setCountIsLoading] = useState(true);
   const [count, setCount] = useState(undefined);
   const [errorLog, setErrorLog] = useState("");
   const [token, setToken] = useState('None');
   const [cookies, setCookie, removeCookie] = useCookies(['cookie-name']);
+  const [modalOpen, setModalOpen] = useState(false);
 
   async function get_count() {
     try {
@@ -66,12 +82,10 @@ function App() {
   }
 
   async function request_for_token() {
-    setTokenIsLoading(true);
     get_token().then(result => {
       if (result) {
         setCookie('csrftoken', result);
         setToken(result);
-        setTokenIsLoading(false);
         setErrorLog("");
       }
     })
@@ -92,6 +106,32 @@ function App() {
 
   return (
     <div className="App">
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <h1>Warning!</h1>
+          <h3>You currently have a token. Would you like to send the request with or without it?</h3>
+          <ButtonGroup variant="contained">
+            <Button onClick={() => {
+              axios.defaults.withCredentials = true;
+              post_count();
+              setModalOpen(false);
+            }}>
+              With
+            </Button>
+            <Button onClick={() => {
+              axios.defaults.withCredentials = false;
+              post_count();
+              setModalOpen(false);
+            }}>Without</Button>
+          </ButtonGroup>
+        </Box>
+
+      </Modal>
       <div style={{'width':'75%', 'marginTop': '15px', 'marginLeft': 'auto', 'marginRight': 'auto'}}>
         <Grid container 
           spacing={2}
@@ -120,8 +160,13 @@ function App() {
               <div style={{display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'}}>
-                <IconButton sx={{display: 'flex', alignItems: 'center'}}>
-                    <AddCircleRoundedIcon onClick={post_count} color='primary' sx={{fontSize: '80px'}}/>
+                <IconButton sx={{display: 'flex', alignItems: 'center'}} onClick={() => {
+                  if (token === 'None')
+                    post_count()
+                  else
+                    setModalOpen(true);
+                }}>
+                    <AddCircleRoundedIcon color='primary' sx={{fontSize: '80px'}}/>
                 </IconButton>
               </div>
             </Item>

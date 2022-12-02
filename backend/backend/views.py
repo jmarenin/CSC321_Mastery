@@ -23,7 +23,6 @@ def get_csrf(request: HttpRequest) -> JsonResponse:
 
 count = 1
 
-# @csrf_exempt
 @require_http_methods(['GET', 'PATCH'])
 def count_request(request: HttpRequest) -> JsonResponse:
     """
